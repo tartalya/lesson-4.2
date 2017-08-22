@@ -1,4 +1,6 @@
 <?php
+require_once 'functions.php';
+
 $dbHost = 'kalopsia.ru';
 $dbUser = 'netology';
 $dbName = 'lesson42';
@@ -15,32 +17,24 @@ if (mysqli_connect_errno()) {
 }
 
 
-if (!empty($_GET['action'])) {
+if (!empty($_GET['action']) && !empty($_GET['id'])) {
 
-    if ($_GET['action'] == 'done' && !empty($_GET['id'])) {
+    $id = intval($_GET['id']);
 
-        $query = 'UPDATE tasks SET is_done = 1 WHERE id =' . intval($_GET['id']);
+    if ($_GET['action'] == 'done') {
 
-        mysqli_query($link, $query);
-        ?><meta http-equiv="refresh" content="0; url=index.php"><?php
+        $query = 'UPDATE tasks SET is_done = 1 WHERE id =' . $id;
     }
 
 
-    if ($_GET['action'] == 'delete' && !empty($_GET['id'])) {
+    if ($_GET['action'] == 'delete') {
 
-        $query = 'DELETE FROM tasks WHERE id =' . intval($_GET['id']);
-
-
-        mysqli_query($link, $query);
-        ?> 
-        <meta http-equiv="refresh" content="0; url=index.php">
-
-        <?php
+        $query = 'DELETE FROM tasks WHERE id =' . $id;
     }
 
-    if ($_GET['action'] == 'edit' && !empty($_GET['id'])) {
+    if ($_GET['action'] == 'edit') {
 
-        $query = 'SELECT * FROM tasks WHERE id =' . intval($_GET['id']);
+        $query = 'SELECT * FROM tasks WHERE id =' . $id;
 
         $result = mysqli_query($link, $query);
         $result = mysqli_fetch_assoc($result);
@@ -51,33 +45,21 @@ if (!empty($_GET['action'])) {
         } else {
 
             $query = 'UPDATE tasks SET description ="' . $_POST['new_description'] . '" ' . 'WHERE id =' . intval($_GET['id']);
-
-            mysqli_query($link, $query);
-            ?><meta http-equiv="refresh" content="0; url=index.php"><?php
         }
     }
+
+    taskAction($link, $query);
 }
 
 
 
 $query = 'SELECT * FROM tasks ';
 
+
 if (!empty($_POST['sort_by'])) {
 
-    if ($_POST['sort_by'] == 'date_created') {
 
-        $query .= 'ORDER BY date_added';
-    }
-
-    if ($_POST['sort_by'] == 'is_done') {
-
-        $query .= 'ORDER BY is_done';
-    }
-
-    if ($_POST['sort_by'] == 'description') {
-
-        $query .= 'ORDER BY description';
-    }
+    $query .= 'ORDER BY ' . mysqli_real_escape_string($link, $_POST['sort_by']);
 }
 
 $result = mysqli_query($link, $query);

@@ -25,7 +25,7 @@
     <form method="POST">
         <label for="sort">Сортировать по:</label>
         <select name="sort_by">
-            <option value="date_created">Дате добавления</option>
+            <option value="date_added">Дате добавления</option>
             <option value="is_done">Статусу</option>
             <option value="description">Описанию</option>
         </select>
@@ -58,17 +58,7 @@
             <td><?= $value['description'] ?></td>
             <td><?= $value['date_added'] ?></td>
 
-            <?php
-            if ($value['is_done'] == 0) {
-
-                $status = 'Не выполнено';
-            } else {
-                $status = 'Выполнено';
-            }
-            ?>
-            <td><span style='color: green;'><?= $status ?></span></td>
-
-
+            <td><span style='color: green;'><?php if ($value['is_done'] == 0) : ?> Не выполнено <?php else : ?> Выполнено <?php endif ?></span></td>
             <td>
                 <a href='?id=<?= $value['id'] ?>&action=edit'>Изменить</a>
                 <a href='?id=<?= $value['id'] ?>&action=done'>Выполнить</a>
