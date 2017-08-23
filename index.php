@@ -1,4 +1,5 @@
 <?php
+
 require_once 'functions.php';
 
 $dbHost = 'kalopsia.ru';
@@ -21,31 +22,36 @@ if (!empty($_GET['action']) && !empty($_GET['id'])) {
 
     $id = intval($_GET['id']);
 
-    if ($_GET['action'] == 'done') {
+    switch ($_GET['action']) {
 
-        $query = 'UPDATE tasks SET is_done = 1 WHERE id =' . $id;
-    }
+        case 'done':
+
+            $query = 'UPDATE tasks SET is_done = 1 WHERE id =' . $id;
+            break;
 
 
-    if ($_GET['action'] == 'delete') {
+        case 'delete':
 
-        $query = 'DELETE FROM tasks WHERE id =' . $id;
-    }
+            $query = 'DELETE FROM tasks WHERE id =' . $id;
+            break;
 
-    if ($_GET['action'] == 'edit') {
 
-        $query = 'SELECT * FROM tasks WHERE id =' . $id;
+        case 'edit':
 
-        $result = mysqli_query($link, $query);
-        $result = mysqli_fetch_assoc($result);
+            $query = 'SELECT * FROM tasks WHERE id =' . $id;
 
-        if (empty($_POST['new_description'])) {
+            $result = mysqli_query($link, $query);
+            $result = mysqli_fetch_assoc($result);
 
-            include 'edittemplate.php';
-        } else {
+            if (empty($_POST['new_description'])) {
 
-            $query = 'UPDATE tasks SET description ="' . $_POST['new_description'] . '" ' . 'WHERE id =' . intval($_GET['id']);
-        }
+                include 'edittemplate.php';
+                die;
+            } else {
+
+                $query = 'UPDATE tasks SET description ="' . $_POST['new_description'] . '" ' . 'WHERE id =' . intval($_GET['id']);
+            }
+            break;
     }
 
     taskAction($link, $query);
@@ -71,8 +77,9 @@ while ($row = mysqli_fetch_assoc($result)) {
 
 
 if (!empty($_POST['add_description'])) {
-
-    $query = 'INSERT INTO tasks (`description`, `date_added`) VALUES ("' . mysqli_real_escape_string($link, $_POST['add_description']) . '", CURRENT_TIMESTAMP)';
+    
+    $newDescription = mysqli_real_escape_string($link, $_POST['add_description']);
+    $query = "INSERT INTO tasks (description, date_added) VALUES ('$newDescription' , CURRENT_TIMESTAMP)";
 
     taskAction($link, $query);
 }
