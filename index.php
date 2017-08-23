@@ -72,10 +72,9 @@ while ($row = mysqli_fetch_assoc($result)) {
 
 if (!empty($_POST['add_description'])) {
 
-    $query = 'INSERT INTO tasks (`description`, `date_added`) VALUES ("' . $_POST['add_description'] . '", CURRENT_TIMESTAMP)';
+    $query = 'INSERT INTO tasks (`description`, `date_added`) VALUES ("' . mysqli_real_escape_string($link, $_POST['add_description']) . '", CURRENT_TIMESTAMP)';
 
-    mysqli_query($link, $query);
-    ?><meta http-equiv="refresh" content="0; url=index.php"><?php
+    taskAction($link, $query);
 }
 
 include 'template.php';
